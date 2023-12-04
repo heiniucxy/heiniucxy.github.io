@@ -7,13 +7,13 @@ import json
 # 读取 JSON 文件
 with open('data_year.json', 'r') as file:
     data = json.load(file)
-for item in data:
-    value = item['data']
-    for val in value:
-        for idx in range(len(val['value'])):
-            val['value'][idx] += 0.1
-            val['value'][idx] = round(val['value'][idx],3)
-        val['value'].append(val['name'])
+# for item in data:
+#     value = item['data']
+#     for val in value:
+#         for idx in range(len(val['value'])):
+#             val['value'][idx] += 0.1
+#             val['value'][idx] = round(val['value'][idx],3)
+#         val['value'].append(val['name'])
 
 # 现在，变量 data 包含了从 JSON 文件中读取的数据
 
@@ -56,6 +56,7 @@ def get_year_chart(year: int):
             data_pair=map_data,
             label_opts=opts.LabelOpts(is_show=False),
             is_map_symbol_show=False,
+            pos_left="20%", pos_right="30%", pos_top="7%", pos_bottom="0%",
             itemstyle_opts={
                 "normal": {"areaColor": "white", "borderColor": "black"},
                 "emphasis": {
@@ -78,7 +79,7 @@ def get_year_chart(year: int):
         .set_global_opts(
             title_opts=opts.TitleOpts(
                 title="2003年以来中国各省能源消耗变化情况",
-                subtitle="GDP单位:亿元",
+                subtitle="能源单位:万吨",
                 pos_left="center",
                 pos_top="top",
                 title_textstyle_opts=opts.TextStyleOpts(
@@ -193,7 +194,7 @@ def get_year_chart(year: int):
 
 
 # Draw Timeline
-time_list = [i for i in range(2003, 2023)]
+time_list = [i for i in range(2003, 2020)]
 timeline = Timeline(
     init_opts=opts.InitOpts(width="1500px", height="800px", theme=ThemeType.DARK)
 )
@@ -214,7 +215,7 @@ timeline.add_schema(
     label_opts=opts.LabelOpts(is_show=True, color="#fff"),
 )
 
-timeline.render("china_gdp_from_1980.html")
+timeline.render("index.html")
 
 # chart_5eb8138588b3493fb997d0b270842284.on('click', function (params) {
 #             var timelineOption = chart_5eb8138588b3493fb997d0b270842284.getOption().timeline[0].currentIndex;
