@@ -1,20 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+body {
+        background-color: #f0f0f0; /* 或者使用 background: url('your-background-image.jpg') */
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    /* 设置图表容器样式 */
+    #chartsContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    /* 这里是你的现有样式 */
+	
+	
+    /* 返回按钮容器的样式 */
+#buttonContainer {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 返回按钮的样式 */
+#backButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#backButton:hover {
+    background-color: #45a049;
+}
+
+</style>
     <meta charset="utf-8">
     <title>ECharts 联动示例</title>
     <!-- 引入 ECharts 文件 -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.0.0/dist/echarts.min.js"></script>
 </head>
 <body>
-    <div style="display: flex;">
-        <!-- 折线图容器 -->
-        <div id="lineChart" style="width: 800px;height:400px;"></div>
-        <!-- 饼图容器 -->
-        <div id="pieChart" style="width: 600px;height:400px;"></div>
+    <!-- 新的容器包裹返回按钮 -->
+    <div id="buttonContainer">
+        <button id="backButton" onclick="window.location.href='index.html'">返回上一页</button>
     </div>
-    <script type="text/javascript">
 
+    <div id="chartsContainer" style="display: flex; justify-content: center; align-items: center; flex-direction: row; height: 100vh;">
+        <div id="lineChart" style="width: 800px; height:400px; margin-right: 20px;"></div>
+        <div id="pieChart" style="width: 600px; height:400px;"></div>
+    </div>
+</body>
+
+    <script type="text/javascript">
+// 格式化数字为保留三位小数
+function formatNumber(num) {
+    return parseFloat(num.toFixed(3));
+}
+function resetSeriesData(index) {
+    lineOption.series[0].data[index].symbolSize = 6; // 重置原始大小
+    // 可能还需要重置其他系列的数据
+}
+
+function updateSeriesData(index) {
+    lineOption.series[0].data[index].symbolSize = 9; // 设置新的大小
+    // 更新其他系列的数据，确保它们仍然显示
+}
 var jsonData = [
     {
         "province": "\u5317\u4eac\u5e02",
@@ -560,7 +622,7 @@ var lineChart = echarts.init(document.getElementById('lineChart'));
 var pieChart = echarts.init(document.getElementById('pieChart'));
 // 提取年份和为每个类别构建数据系列
 var years = [];
-var seriesData = Array(10).fill(null).map(() => []);
+var seriesData = Array(9).fill(null).map(() => []);
 var totalResources = []; // 用于存储每年的资源总量
 
 jsonData.forEach(function(provinceData) {
@@ -571,11 +633,13 @@ jsonData.forEach(function(provinceData) {
                 var yearlyTotal = 0;
 
                 yearData.value.forEach(function(categoryValue, index) {
-                    seriesData[index].push(categoryValue);
+			if (index < 9) {
+                    seriesData[index].push(formatNumber(categoryValue));
                     yearlyTotal += categoryValue;
+}
                 });
 
-                totalResources.push(yearlyTotal);
+                totalResources.push(formatNumber(yearlyTotal));
             }
         });
     }
@@ -648,19 +712,21 @@ var lineOption = {
 
 // 提取年份和对应的资源总量数据
 var years = [];
-var totalResources = [];
-var categoryTotals = Array(10).fill(0); // 创建一个数组来存储每个类别的总和
+var totalResources1 = [];
+var categoryTotals = Array(9).fill(0); // 创建一个数组来存储每个类别的总和
 
 jsonData.forEach(function(provinceData) {
     if (provinceData.province === Province) {
         provinceData.data.forEach(function(yearData) {
             if (yearData.year >= startYear && yearData.year <= endYear) {
                 years.push(yearData.year.toString());
-                totalResources.push(yearData.value.reduce(function(a, b) { return a + b; }, 0));
+                totalResources1.push(yearData.value.reduce(function(a, b) { return a + b; }, 0));
 
                 // 累加每个类别的值
                 yearData.value.forEach(function(categoryValue, index) {
-                    categoryTotals[index] += categoryValue;
+		if (index < 9){
+                    categoryTotals[index] += formatNumber(categoryValue);
+}
                 });
             }
         });
@@ -670,7 +736,9 @@ jsonData.forEach(function(provinceData) {
 
 // 准备饼图数据
 var pieData = categoryTotals.map(function(total, index) {
-    return { value: total, name: '类别' + (index + 1) };
+if(index<9){
+    return { value: formatNumber(total), name: categoryNames[index] };
+}
 });
 
 
@@ -680,7 +748,7 @@ var pieData = categoryTotals.map(function(total, index) {
         top: 'top' },
     tooltip: { trigger: 'item' },
     legend: {type: 'scroll', // 设置图例为可滚动的
-        top: 'bottom', top: '5%', left: 'center' },
+        top: 'bottom',  left: 'center' },
     series: [{
         name: '资源分布',
         type: 'pie',
@@ -688,7 +756,7 @@ var pieData = categoryTotals.map(function(total, index) {
         data: pieData,
         emphasis: {
             itemStyle: {
-                shadowBlur: 10,
+                shadowBlur: 9,
                 shadowOffsetX: 0,
                 shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
@@ -713,10 +781,10 @@ var pieData = categoryTotals.map(function(total, index) {
             lineOption.series[0].data[selectedIndex].symbolSize = 6; // 重置原始大小
         }
         selectedIndex = params.dataIndex;
-        lineOption.series[0].data[selectedIndex].symbolSize = 10; // 设置新的大小
+        lineOption.series[0].data[selectedIndex].symbolSize = 9; // 设置新的大小
 
         // 更新折线图
-        lineChart.setOption(lineOption);
+        //lineChart.setOption(lineOption);
         // 显示提示框
         lineChart.dispatchAction({
             type: 'showTip',
@@ -727,7 +795,8 @@ var pieData = categoryTotals.map(function(total, index) {
         // 获取选中年份的数据
         var selectedYearData = jsonData.find(p => p.province === Province).data.find(d => d.year.toString() === year);
         var pieData = selectedYearData.value.map(function(val, idx) {
-            return { value: val, name: '类别' + (idx + 1) };
+		if (idx < 9)
+            return { value: formatNumber(val), name:categoryNames[idx] };
         });
 
         // 更新饼图数据
