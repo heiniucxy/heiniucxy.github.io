@@ -3,7 +3,7 @@
 <head>
 <style>
 body {
-        background: rgba(255, 255, 255, 0.8) url('your-background-image.jpg');/*background-color: #f0f0f0; 或者使用 background: url('your-background-image.jpg') */
+        background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('your-background-image.jpg');/*background-color: #f0f0f0; 或者使用 background: url('your-background-image.jpg') */
         margin: 0;
         padding: 0;
         display: flex;
@@ -26,7 +26,7 @@ body {
 #buttonContainer {
     position: absolute;
     top: 60px;
-    left: 50%;
+    left: 10%;
     transform: translateX(-50%);
 }
 
@@ -51,7 +51,7 @@ body {
     <!-- 引入 ECharts 文件 -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.0.0/dist/echarts.min.js"></script>
 </head>
-<body>
+<body style="background-size:100%">
     <!-- 新的容器包裹返回按钮 -->
     <div id="buttonContainer">
         <button id="backButton" onclick="window.location.href='index.html'">返回上一页</button>
